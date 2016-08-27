@@ -233,10 +233,7 @@ JV10_function <- function(X, Tg,
   
   LL = 0; dLL = 1; iter = 0
   
-  while(TRUE) {
-    if(abs(dLL < max_dLL) | iter > max_iter) {
-      break
-    }
+  while(iter < max_iter) {
     
     iter = iter + 1
     
@@ -254,6 +251,11 @@ JV10_function <- function(X, Tg,
     dLL = LL - sum(log(W))
     
     LL = sum(log(W))
+    
+    if(abs(dLL < max_dLL)) {
+      
+      break
+    }
     
     Pt = sum(Wt / W) / n
     Pn = sum(rowSums(Wn) / W) / n
