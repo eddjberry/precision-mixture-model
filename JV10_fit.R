@@ -41,22 +41,23 @@ JV10_fit <- function(X, Tg, NT = replicate(NROW(X), 0), return.ll = TRUE) {
   
   if(nn == 0) {N = 0}
   
-  LL = -Inf
+  loglik = -Inf
   
   # Parameter estimates
   for(i in seq_along(K)) {
     for(j in seq_along(N)) {
       for(k in seq_along(U)) {
-        est_list = JV10_function(X, Tg, NT, c(K[i], 1-N[j]-U[k], N[j], U[k]))
-        if (est_list$ll > LL) {
-          LL = est_list$ll
+        est_list = JV10_function(X = X, Tg = Tg, NT = NT)#, B_start = c(K[i], 1-N[j]-U[k], N[j], U[k]))
+        if (est_list$ll > loglik ) {
+          loglik = est_list$ll
           B = est_list$b
         }
       }
     }
   }
+  
   if(return.ll == TRUE) {
-    return(list(B = B, LL = LL))
+    return(list(B = B, LL = loglik))
   } else {
     return(B)
   }

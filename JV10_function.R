@@ -5,7 +5,7 @@
 # memory is set by allocation of a shared resource. Journal of Vision 
 # 9(10): 7, 1-11 (2009)
 
-# Takes returns a list where the first element in a single row data frame
+# Returns a list where the first element in a single row data frame
 # of parameter estimates and the second is a single log likelihood value
 
 
@@ -30,6 +30,7 @@ A1inv <- function(R) {
   } else {
     K = 1 / (R^3 - 4 * R^2 + 3 * R)
   }
+  return(K)
 }
 
 #=============
@@ -47,8 +48,8 @@ JV10_function <- function(X, Tg,
     stop("Error: Input not correctly dimensioned", call. = FALSE)
   }
   
-  if(B_start[1] < 0 | any(B_start[2:4] < 0) | any(B_start[2:4] > 1) | abs(sum(B_start[2:4]) - 1) > 10^-6) {
-    stop("Error: Invalid model parameters")
+  if((!(is.null(B_start))) & (any(B_start[1] < 0, B_start[2:4] < 0, B_start[2:4] > 1, abs(sum(B_start[2:4]) - 1) > 10^-6))) {
+    stop("Error: Invalid model parameters", call. = FALSE)
   }
   
   max_iter = 10^4; max_dLL = 10^-4
@@ -64,8 +65,8 @@ JV10_function <- function(X, Tg,
     Pn = ifelse(nn > 0, 0.3, 0)
     Pu = 1 - Pt - Pn
   } else {
-      K = B_start[1]; Pt = B_start[2]
-      Pn = B_start[3]; Pu = B_start[4]
+    K = B_start[1]; Pt = B_start[2]
+    Pn = B_start[3]; Pu = B_start[4]
   }
   
   E = wrap(X - Tg)
@@ -75,18 +76,19 @@ JV10_function <- function(X, Tg,
   } else {
     NE = repmat(X, 1, nn) }
   
-  LL = -Inf; iter = 0
+  LL = NaN; dLL = NaN; iter = 0
   
-  while(TRUE) {
+  while((any(abs(dLL) > max_dLL) | (iter < max_iter))) {
+    
     iter = iter + 1
     
     Wt = Pt * vonmisespdf(E, 0, K)
-    Wg = Pu * matrix(1, nrow = n, ncol = 1) / (2 * pi)
+    Wg = Pu * replicate(n, 1) / (2 * pi)
     
     if(nn == 0) {
       Wn = matrix(0, nrow = NROW(NE), ncol = NCOL(NE))
     } else {
-      Wn = Pn/nn * vonmisespdf(NE, 0, K) # test with and without (Pn/nn)
+      Wn = Pn/nn * vonmisespdf(NE, 0, K)
     }
     
     W = rowSums(cbind(Wt, Wg, Wn))
@@ -94,10 +96,6 @@ JV10_function <- function(X, Tg,
     dLL = LL - sum(log(W))
     
     LL = sum(log(W))
-    
-    if(abs(dLL) < max_dLL | iter > max_iter) {
-      break
-    }
     
     Pt = sum(Wt / W) / n
     Pn = sum(rowSums(Wn) / W) / n
@@ -132,8 +130,8 @@ JV10_function <- function(X, Tg,
   }
   
   return(list(b = B, ll = LL))
-}
   
+}  
 
 
 ##########################################################################
