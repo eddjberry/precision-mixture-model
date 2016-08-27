@@ -148,7 +148,8 @@ JV10_fit <- function(X, Tg, NT = replicate(NROW(X), 0), return.ll = TRUE) {
   for(i in seq_along(K)) {
     for(j in seq_along(N)) {
       for(k in seq_along(U)) {
-        est_list = JV10_function(X = X, Tg = Tg, NT = NT)#, B_start = c(K[i], 1-N[j]-U[k], N[j], U[k]))
+        est_list = JV10_function(X = X, Tg = Tg, NT = NT, B_start = c(K[i], 1-N[j]-U[k], N[j], U[k]))
+        print(est_list)
         if (est_list$ll > loglik ) {
           loglik = est_list$ll
           B = est_list$b
@@ -206,7 +207,7 @@ JV10_function <- function(X, Tg,
     stop("Error: Invalid model parameters", call. = FALSE)
   }
   
-  max_iter = 10^4; max_dLL = 10^-4
+  max_iter = 10^6; max_dLL = 10^-5
   
   n = NROW(X)
   
@@ -230,9 +231,12 @@ JV10_function <- function(X, Tg,
   } else {
     NE = repmat(X, 1, nn) }
   
-  LL = NaN; dLL = NaN; iter = 0
+  LL = 0; dLL = 1; iter = 0
   
-  while((any(abs(dLL) > max_dLL) | (iter < max_iter))) {
+  while(TRUE) {
+    if(abs(dLL < max_dLL) | iter > max_iter) {
+      break
+    }
     
     iter = iter + 1
     
@@ -260,7 +264,7 @@ JV10_function <- function(X, Tg,
     S = c(sin(E), sin(NE)) ; C = c(cos(E), cos(NE))
     r = c(sum(sum(S * rw)), sum(sum(C * rw)))
     
-    if(sum(sum(rw)) == 0) {
+    if(sum(sum(rw, na.rm = T)) == 0) {
       K = 0
     } else {
       R = sqrt(sum(r^2)) / sum(sum(rw))
