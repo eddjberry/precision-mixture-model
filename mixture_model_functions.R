@@ -149,8 +149,8 @@ JV10_fit <- function(X, Tg, NT = replicate(NROW(X), 0), return.ll = TRUE) {
     for(j in seq_along(N)) {
       for(k in seq_along(U)) {
         est_list = JV10_function(X = X, Tg = Tg, NT = NT, B_start = c(K[i], 1-N[j]-U[k], N[j], U[k]))
-        print(est_list)
-        if (est_list$ll > loglik ) {
+        #print(est_list)
+        if (est_list$ll > loglik & !is.nan(est_list$ll) ) {
           loglik = est_list$ll
           B = est_list$b
         }
@@ -169,10 +169,14 @@ JV10_fit <- function(X, Tg, NT = replicate(NROW(X), 0), return.ll = TRUE) {
 
 # repmat function adapted from http://haky-functions.blogspot.co.uk/2006/11/repmat-function-matlab.html
 
-repmat = function(X, m, n){
+repmat = function(X, nn){
   mx = NROW(X)
   nx = NCOL(X)
-  matrix(data = X, nrow = mx, ncol = nx*n)
+  if(n > 0){
+    return(matrix(data = X, nrow = mx, ncol = nx*nn))
+  } else {
+  return(matrix(nrow = mx, ncol = nn))
+  }
 }
 
 #==================
@@ -207,7 +211,7 @@ JV10_function <- function(X, Tg,
     stop("Error: Invalid model parameters", call. = FALSE)
   }
   
-  max_iter = 10^6; max_dLL = 10^-5
+  max_iter = 10^4; max_dLL = 10^-4
   
   n = NROW(X)
   
@@ -224,55 +228,59 @@ JV10_function <- function(X, Tg,
     Pn = B_start[3]; Pu = B_start[4]
   }
   
+  #print(K); print(Pt); print(Pn); print(Pu)
+  
   E = wrap(X - Tg)
   
-  if(nn > 0) {
-    NE = repmat(X, 1, nn) - NT
+  if(nn > 0){
+    NE = wrap(repmat(X, nn) - NT)
   } else {
-    NE = repmat(X, 1, nn) }
+    NE = repmat(X, nn)
+  }
   
-  LL = 0; dLL = 1; iter = 0
+  LL = 0; dLL = 1; iter = 1
   
-  while(iter < max_iter) {
-    
+  while(TRUE) {
+    #print(iter)
     iter = iter + 1
+    #print(iter)
     
     Wt = Pt * vonmisespdf(E, 0, K)
     Wg = Pu * replicate(n, 1) / (2 * pi)
     
-    if(nn == 0) {
-      Wn = matrix(0, nrow = NROW(NE), ncol = NCOL(NE))
+    if(nn == 0){
+      Wn = matrix(nrow = NROW(NE), ncol = NCOL(NE)) 
     } else {
       Wn = Pn/nn * vonmisespdf(NE, 0, K)
     }
-    
+                
     W = rowSums(cbind(Wt, Wg, Wn))
     
     dLL = LL - sum(log(W))
-    
+    #print(dLL)
     LL = sum(log(W))
     
-    if(abs(dLL < max_dLL)) {
-      
+    if(abs(dLL) < max_dLL | iter > max_iter | is.nan(dLL)) {
+      print("yas")
       break
     }
-    
+      
     Pt = sum(Wt / W) / n
     Pn = sum(rowSums(Wn) / W) / n
     Pu = sum(Wg / W) / n
     
-    rw = c((Wt / W), (Wn / repmat(W,1,nn)))
+    rw = c((Wt / W), (Wn / repmat(W, nn)))
     
     S = c(sin(E), sin(NE)) ; C = c(cos(E), cos(NE))
     r = c(sum(sum(S * rw)), sum(sum(C * rw)))
-    
+      
     if(sum(sum(rw, na.rm = T)) == 0) {
       K = 0
     } else {
       R = sqrt(sum(r^2)) / sum(sum(rw))
       K = A1inv(R)
     }
-    
+      
     if(n <= 15) {
       if(K < 2) {
         K = max(K - 2 / (n * K), 0)
@@ -280,7 +288,9 @@ JV10_function <- function(X, Tg,
         K = K * (n - 1)^3 / (n^3 + n)
       }
     }
-  }
+    #print(iter)
+}
+ 
   
   if(iter > max_iter) {
     warning('JV10_function:MaxIter','Maximum iteration limit exceeded.', call. = FALSE)
