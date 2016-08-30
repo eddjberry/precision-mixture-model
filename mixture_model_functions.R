@@ -149,7 +149,6 @@ JV10_fit <- function(X, Tg, NT = replicate(NROW(X), 0), return.ll = TRUE) {
     for(j in seq_along(N)) {
       for(k in seq_along(U)) {
         est_list = JV10_function(X = X, Tg = Tg, NT = NT, B_start = c(K[i], 1-N[j]-U[k], N[j], U[k]))
-        #print(est_list)
         if (est_list$ll > loglik & !is.nan(est_list$ll) ) {
           loglik = est_list$ll
           B = est_list$b
@@ -172,7 +171,7 @@ JV10_fit <- function(X, Tg, NT = replicate(NROW(X), 0), return.ll = TRUE) {
 repmat = function(X, nn){
   mx = NROW(X)
   nx = NCOL(X)
-  if(n > 0){
+  if(nn > 0){
     return(matrix(data = X, nrow = mx, ncol = nx*nn))
   } else {
   return(matrix(nrow = mx, ncol = nn))
@@ -228,8 +227,6 @@ JV10_function <- function(X, Tg,
     Pn = B_start[3]; Pu = B_start[4]
   }
   
-  #print(K); print(Pt); print(Pn); print(Pu)
-  
   E = wrap(X - Tg)
   
   if(nn > 0){
@@ -241,9 +238,7 @@ JV10_function <- function(X, Tg,
   LL = 0; dLL = 1; iter = 1
   
   while(TRUE) {
-    #print(iter)
     iter = iter + 1
-    #print(iter)
     
     Wt = Pt * vonmisespdf(E, 0, K)
     Wg = Pu * replicate(n, 1) / (2 * pi)
@@ -257,11 +252,9 @@ JV10_function <- function(X, Tg,
     W = rowSums(cbind(Wt, Wg, Wn))
     
     dLL = LL - sum(log(W))
-    #print(dLL)
     LL = sum(log(W))
     
     if(abs(dLL) < max_dLL | iter > max_iter | is.nan(dLL)) {
-      print("yas")
       break
     }
       
@@ -288,7 +281,6 @@ JV10_function <- function(X, Tg,
         K = K * (n - 1)^3 / (n^3 + n)
       }
     }
-    #print(iter)
 }
  
   
