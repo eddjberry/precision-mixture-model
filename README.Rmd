@@ -1,9 +1,5 @@
 # Functions for modelling response errors in precision tasks
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
-```
-
 Translation of [Paul Bays'](http://www.psychol.cam.ac.uk/people/paul-bays) Matlab functions for modelling precision data into R. Bays' guide to the functions and their usage can be found [here](http://www.paulbays.com/code/JV10/). All the function names are the same as the Matlab functions. The code is also as close as possible to the Matlab code 'under the hood'. The model implemented is described in:
 
 The precision of visual working memory is set by allocation of a shared resource. Bays PM, Catalao RFG & Husain M. *Journal of Vision* 9(10): 7, 1-11 (2009).
@@ -35,7 +31,7 @@ JV10_df | Runs JV10_fit over a dataframe | See below | See below
 
 If we want to calculate bias (central tendency) or precision (inverse SD) all you need to do is call
 
-```r{}
+```
 JV10_error(X, Tg)
 ```
 
@@ -49,7 +45,7 @@ To do the mixture modelling described in Bayes et al. 2009 you call `JV10_fit(X,
 
 I've written a function JV10_df for cases where you want to apply the mixture modelling to a dataframe.
 
-```r{}
+```
 estimates <- JV10_df(df, id.var = "id", tar.var = "target", res.var = "response", nt.vars = NULL)
 ```
 The `df` argument is your dataframe. `id.var` is the name of the column that contains a factor that you want to estimate the parameters for each level of. `tar.var` is the name of your target column and `res.var` is the name of your response variable. Use `nt.vars` if you have non-targets. This can either be a single column or a set of columns, e.g. `c("nt1", "nt2")`. You don't get the logliklihood back here but I may update this at some point. 
