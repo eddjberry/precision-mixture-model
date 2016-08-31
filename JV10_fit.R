@@ -47,8 +47,8 @@ JV10_fit <- function(X, Tg, NT = replicate(NROW(X), 0), return.ll = TRUE) {
   for(i in seq_along(K)) {
     for(j in seq_along(N)) {
       for(k in seq_along(U)) {
-        est_list = JV10_function(X = X, Tg = Tg, NT = NT)#, B_start = c(K[i], 1-N[j]-U[k], N[j], U[k]))
-        if (est_list$ll > loglik ) {
+        est_list = JV10_function(X = X, Tg = Tg, NT = NT, B_start = c(K[i], 1-N[j]-U[k], N[j], U[k]))
+        if (est_list$ll > loglik & !is.nan(est_list$ll) ) {
           loglik = est_list$ll
           B = est_list$b
         }
