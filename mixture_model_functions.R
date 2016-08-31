@@ -100,6 +100,20 @@ vonmisespdf <- function(X, MU, K) {
 
 #==============================================================================
 
+# logspace function for logarithmically spaced vectors
+# soure: http://r.789695.n4.nabble.com/logarithmic-seq-tp900431p900433.html
+
+logspace <- function(a, b, n) exp(log(10)*seq(a, b, length.out=n))
+
+# trapz function from the caTools package by Jarek Tuszynski
+
+trapz <- function(x, y) {
+  idx = 2:length(x)
+  return (as.double( (x[idx] - x[idx-1]) %*% (y[idx] + y[idx-1])) / 2)
+}
+
+#==============================================================================
+
 JV10_error <- function(X, Tg = 0) {
   if(any(abs(X) > pi) | any(abs(Tg) > pi)) {
     stop("Error: Input values must be in radians, range -PI to PI", call. = FALSE)

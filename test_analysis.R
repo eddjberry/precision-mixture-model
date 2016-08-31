@@ -11,20 +11,27 @@ d1 <- d %>%
 d2 <- d %>%
   filter(id == "pilot2")
 
-d3 <- d %>%
-  filter(id == "pilot3")
-
 
 (ests1 = JV10_fit(X = d1$response_ori, Tg  = d1$target_ori))
 
 (ests2 = JV10_fit(X = d2$response_ori, Tg  = d2$target_ori))
 
-(ests3 = JV10_fit(X = d3$response_ori, Tg  = d3$target_ori))
-
-
 # For id == "pilot1": K = 0.1386, Pt = 0.9853, Pn = 0, Pu = 0.0147, LL = -164.9913
 # For id == "pilot2": K = 0.5433, Pt = 0.1003, Pn = 0, Pu = 0.8997, LL = -165.3788
-# For id == "pilot3": K = 3.2230, Pt = 0.0004, Pn = 0, Pu, 0.9996, LL = -165.4104
-  
 
+# looping over df (ugly 'solution')
+
+l <- split(d, d$id)
+
+paras <- data.frame(K = FALSE, Pt = FALSE, Pn = FALSE, Pu = FALSE)
+
+for(i in seq_along(l)) {
+  dd <- data.frame(l[i])
   
+  X <- as.matrix(dd[3])
+  Tg <- as.matrix(dd[4])
+  
+  B <- JV10_fit(X, Tg, return.ll = FALSE)
+  
+  paras[i,] <- B
+}
