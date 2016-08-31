@@ -2,7 +2,7 @@
 
 # Just source this script and you'll have everything you need to work through the README
 
-# Translated into R by Ed D. J. Berry (github.com/eddjberry) 
+# Unless otherwise stated translated into R by Ed D. J. Berry (github.com/eddjberry) 
 # from functions written by Paul Bays (paulbays.com) in Matlab
 
 # Ref: Bays PM, Catalao RFG & Husain M. The precision of visual working 
@@ -377,6 +377,43 @@ sd2k <- function(S){
   K[R < 0.53] = 2 * R[R < 0.53] + R[R < 0.53]^3 + (5 * R[R < 0.53]^5) / 6
   
   return(K)
+}
+
+#==============================================================================
+
+# This (admittedly ugly) function takes a dataframe and returns parameters
+# estimates for each level of the id variable and the given
+# target and response variables.
+
+# If there are non-target variables then nt.vars should be either a list column 
+# names or a character vectorsi.e. nt.vars = c("nt1", "nt2")
+
+# This function is by Ed Berry, I attribute none of its ugliness to Paul Bayes :')
+
+JV10_df <- function(df, id.var = "id", tar.var = "target", res.var = "response", nt.vars = NULL){
+  id <- d[, id.var]
+  
+  l <- split(d, id)
+  
+  paras <- data.frame(id = FALSE, K = FALSE, Pt = FALSE, Pn = FALSE, Pu = FALSE)
+  
+  for(i in seq_along(l)) {
+    df <- as.data.frame.list(l[i], col.names = colnames(l[i]))
+    
+    X <- as.matrix(df[, tar.var])
+    Tg <- as.matrix(df[res.var])
+    
+    if(is.null(nt.vars)) {
+      B <- JV10_fit(X, Tg, return.ll = FALSE)
+    } else {
+      NT = as.matrix(df[,nt.vars])
+      B <- JV10_fit(X, Tg, NT, FALSE)
+    }
+    id <- as.character(df[1, id.var])
+    paras[i, 1] <- id
+    paras[i,2:5] <- B
+  }
+  return(paras)
 }
 
   

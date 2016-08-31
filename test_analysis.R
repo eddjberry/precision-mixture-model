@@ -12,26 +12,14 @@ d2 <- d %>%
   filter(id == "pilot2")
 
 
-(ests1 = JV10_fit(X = d1$response_ori, Tg  = d1$target_ori))
+(ests1 = JV10_fit(X = d1$response, Tg  = d1$target))
 
-(ests2 = JV10_fit(X = d2$response_ori, Tg  = d2$target_ori))
+(ests2 = JV10_fit(X = d2$response, Tg  = d2$target))
 
 # For id == "pilot1": K = 0.1386, Pt = 0.9853, Pn = 0, Pu = 0.0147, LL = -164.9913
 # For id == "pilot2": K = 0.5433, Pt = 0.1003, Pn = 0, Pu = 0.8997, LL = -165.3788
 
-# looping over df (ugly 'solution')
+# looping over df; the tar.var argument actually defaults to "target" and
+# res.var defaults to response but I've included them here for ease of reading.
 
-l <- split(d, d$id)
-
-paras <- data.frame(K = FALSE, Pt = FALSE, Pn = FALSE, Pu = FALSE)
-
-for(i in seq_along(l)) {
-  dd <- data.frame(l[i])
-  
-  X <- as.matrix(dd[3])
-  Tg <- as.matrix(dd[4])
-  
-  B <- JV10_fit(X, Tg, return.ll = FALSE)
-  
-  paras[i,] <- B
-}
+JV10_df(d, tar.var = "target", res.var = "response")
