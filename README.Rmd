@@ -10,7 +10,7 @@ The precision of visual working memory is set by allocation of a shared resource
 
 To use the functions here the easiest thing to do is have `source("mixture_model_functions.R")` at the top of your script, making sure that file is in your working directory. The individual functions are also provided as seperate files but be aware that they depend on one another; you'll need to have most of them available in your working directory.
 
-*If you use this code please refer to the paper above and Pauls Bays' website [bayslab.com](bayslab.com).*
+**If you use this code please refer to the paper above and Pauls Bays' website [bayslab.com](bayslab.com).**
 
 ## Overview of functions
 
@@ -24,7 +24,7 @@ randomvonmises| Random samples from a Von Mises distribution | N, Mu, concentrat
 vonmisespdf   | PDF for Von Mises distribution | Vector of radians, Mu, concentration K | Vector of probabilites
 k2sd         | Convert from Von Mises K to circular SD | (Vector of) K | (Vector of) SD
 sd2k | Convert circular SD to Von Mises K | (Vector of) SD | (Vector of) K 
-wrap | Degrees to radians from -$\pi$ to $\pi$ | Vector of degrees | Vector of radians
+wrap | Degrees to radians from -*pi* to *pi* | Vector of degrees | Vector of radians
 JV10_error | Calculate bias and precision | See below | See below
 JV10_likelihood | Estimate mixture model likelihood | Starting parameters, responses, targets (Non-targets) | Dataframe with liklihood and log-liklihood
 JV10_function | The main modelling function | Responses, targets (Non-targets), (Starting values) | List of parameters and log-likelihood
@@ -39,7 +39,7 @@ If we want to calculate bias (central tendency) or precision (inverse SD) all yo
 JV10_error(X, Tg)
 ```
 
-where X is a vector of responses and Tg is a vector of targets. Importantly these inputs must be in the range -$\pi$ to $\pi$. To get your degrees to this range use the `wrap` function. `JV10_error` return a `dataframe` with two columns `P` for the precision value and `B` for the bias value. If the vector of target orientations isn't included then it defaults to 0. When calling wrap you should divide the input by `180*pi` if the range of unique values is 0 to 360 degrees. If the range of unique values is 0 to 180 degrees (e.g. bar orientations) then divide by `90*pi`.
+where X is a vector of responses and Tg is a vector of targets. Importantly these inputs must be in the range -*pi* to *pi*. To get your degrees to this range use the `wrap` function. `JV10_error` return a `dataframe` with two columns `P` for the precision value and `B` for the bias value. If the vector of target orientations isn't included then it defaults to 0. When calling wrap you should divide the input by `180*pi` if the range of unique values is 0 to 360 degrees. If the range of unique values is 0 to 180 degrees (e.g. bar orientations) then divide by `90*pi`.
 
 ## Mixture modelling
 
