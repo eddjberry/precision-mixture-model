@@ -7,7 +7,7 @@ JV10_likelihood <- function(B, X, Tg, NT = replicate(NROW(X), 0)) {
   if(NCOL(X) > 2 | NCOL(Tg) > 1 | NROW(X) != NROW(Tg) | (any(NT != 0) & NROW(NT) != NROW(X) | NROW(NT) != NROW(Tg))) {
     stop("Error: Input not correctly dimensioned", call. = FALSE)
   }
-  if(B_start[1] < 0 | any(B_start[2:4] < 0) | any(B_start[2:4] > 1) | abs(sum(B_start[2:4]) - 1) > 10^-6) {
+  if(B[1] < 0 | any(B[2:4] < 0) | any(B[2:4] > 1) | abs(sum(B[2:4]) - 1) > 10^-6) {
     stop("Error: Invalid model parameters")
   }
   
@@ -22,7 +22,7 @@ JV10_likelihood <- function(B, X, Tg, NT = replicate(NROW(X), 0)) {
     L = rowSums(cbind(Wt, Wu))
   } else {
     nn = NCOL(NT)
-    NE = wrap(repmat(X, 1, nn) - NT)
+    NE = wrap(repmat(X, nn) - NT)
     Wn = B[3] / nn * vonmisespdf(NE, 0, B[1])
     L = rowSums(cbind(Wt, Wn, Wu))
   }

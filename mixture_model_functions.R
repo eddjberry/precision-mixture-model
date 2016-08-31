@@ -64,6 +64,7 @@ cstd <- function(x) {
 # Ref: Best, D. and Fisher, N. (1979). Applied Statistics, 24, 152-157.
 
 randomvonmises <- function(N, MU, K) {
+  X = NULL
   if(K == 0) {
     X = (runif(N) * 2 - 1) * pi
   }
@@ -121,7 +122,6 @@ JV10_error <- function(X, Tg = 0) {
   if(any(dim(X)) != any(dim(Tg))) {
     stop("Error: Inputs must have the same dimensions", call. = FALSE)
   }
-  if(NROW(X) == 1) { X = t(X); Tg = t(Tg) }
   
   E = wrap(X - Tg) # error: diff between response and target
   
@@ -129,7 +129,7 @@ JV10_error <- function(X, Tg = 0) {
   N = NROW(X)
   
   x = logspace(-2, 2, 1000)
-  P0 = trapz(x, N / sqrt(x) %*% exp(x + N %*% exp(-x))) # expected precision under uniform distribution
+  P0 = trapz(x, N / (sqrt(x) * exp(x + (N * exp(-x))))) # expected precision under uniform distribution
   
   P = (1 / cstd(E)) - P0
   
@@ -315,7 +315,7 @@ JV10_likelihood <- function(B, X, Tg, NT = replicate(NROW(X), 0)) {
   if(NCOL(X) > 2 | NCOL(Tg) > 1 | NROW(X) != NROW(Tg) | (any(NT != 0) & NROW(NT) != NROW(X) | NROW(NT) != NROW(Tg))) {
     stop("Error: Input not correctly dimensioned", call. = FALSE)
   }
-  if(B_start[1] < 0 | any(B_start[2:4] < 0) | any(B_start[2:4] > 1) | abs(sum(B_start[2:4]) - 1) > 10^-6) {
+  if(B[1] < 0 | any(B[2:4] < 0) | any(B[2:4] > 1) | abs(sum(B[2:4]) - 1) > 10^-6) {
     stop("Error: Invalid model parameters")
   }
   
@@ -330,7 +330,7 @@ JV10_likelihood <- function(B, X, Tg, NT = replicate(NROW(X), 0)) {
     L = rowSums(cbind(Wt, Wu))
   } else {
     nn = NCOL(NT)
-    NE = wrap(repmat(X, 1, nn) - NT)
+    NE = wrap(repmat(X, nn) - NT)
     Wn = B[3] / nn * vonmisespdf(NE, 0, B[1])
     L = rowSums(cbind(Wt, Wn, Wu))
   }

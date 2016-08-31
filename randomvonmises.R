@@ -7,6 +7,7 @@
 # Ref: Best, D. and Fisher, N. (1979). Applied Statistics, 24, 152-157.
 
 randomvonmises <- function(N, MU, K) {
+  X = NULL
   if(K == 0) {
     X = (runif(N) * 2 - 1) * pi
   }

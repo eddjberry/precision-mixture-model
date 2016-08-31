@@ -39,7 +39,6 @@ JV10_error <- function(X, Tg = 0) {
   if(any(dim(X)) != any(dim(Tg))) {
     stop("Error: Inputs must have the same dimensions", call. = FALSE)
   }
-  if(NROW(X) == 1) { X = t(X); Tg = t(Tg) }
   
   E = wrap(X - Tg) # error: diff between response and target
   
@@ -47,7 +46,7 @@ JV10_error <- function(X, Tg = 0) {
   N = NROW(X)
   
   x = logspace(-2, 2, 1000)
-  P0 = trapz(x, N / sqrt(x) %*% exp(x + N %*% exp(-x))) # expected precision under uniform distribution
+  P0 = trapz(x, N / (sqrt(x) * exp(x + (N * exp(-x))))) # expected precision under uniform distribution
   
   P = (1 / cstd(E)) - P0
   
