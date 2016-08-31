@@ -1,2 +1,3 @@
 # precision-mixture-model
-R code for the precision mixture modelling by Paul Bays
+
+Translation of Paul Bays' Matlab functions for modelling precision data into R.
