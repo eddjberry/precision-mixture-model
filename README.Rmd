@@ -51,3 +51,7 @@ estimates <- JV10_df(df, id.var = "id", tar.var = "target", res.var = "response"
 The `df` argument is your dataframe. `id.var` is the name of the column that contains a factor that you want to estimate the parameters for each level of. `tar.var` is the name of your target column and `res.var` is the name of your response variable. Use `nt.vars` if you have non-targets. This can either be a single column or a set of columns, e.g. `c("nt1", "nt2")`. You don't get the logliklihood back here but I may update this at some point.
 
 The file `"test_analysis.R"` shows what using this function would look like and runs in conjunction with the file `"test_data.csv"`.
+
+## Errors
+
+I've tested the code against the Matlab version but if you find any issues let me know (e.d.j.berry14@leeds.ac.uk). Should you use this code for a paper you might want to double-check there haven't been any updates/error-fixes posted here before publishing. 
