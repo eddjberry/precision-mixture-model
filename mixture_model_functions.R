@@ -128,7 +128,7 @@ JV10_error <- function(X, Tg = 0) {
   # Precision
   N = NROW(X)
   
-  x = logspace(-2, 2, 1000)
+  x = logspace(-2, 2, 100)
   P0 = trapz(x, N / (sqrt(x) * exp(x + (N * exp(-x))))) # expected precision under uniform distribution
   
   P = (1 / cstd(E)) - P0
