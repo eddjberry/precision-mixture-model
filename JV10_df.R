@@ -5,7 +5,7 @@
 # If there are non-target variables then nt.vars should be either a list column 
 # names or a character vectorsi.e. nt.vars = c("nt1", "nt2")
 
-JV10_df <- function(df, id.var = "id", tar.var = "target", res.var = "response", nt.vars = NULL){
+JV10_df <- function(d, id.var = "id", tar.var = "target", res.var = "response", nt.vars = NULL){
   id <- d[, id.var]
   
   l <- split(d, id)

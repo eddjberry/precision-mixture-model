@@ -390,7 +390,7 @@ sd2k <- function(S){
 
 # This function is by Ed Berry, I attribute none of its ugliness to Paul Bayes :')
 
-JV10_df <- function(df, id.var = "id", tar.var = "target", res.var = "response", nt.vars = NULL){
+JV10_df <- function(d, id.var = "id", tar.var = "target", res.var = "response", nt.vars = NULL){
   id <- d[, id.var]
   
   l <- split(d, id)
