@@ -6,7 +6,7 @@ The precision of visual working memory is set by allocation of a shared resource
 
 To use the functions here the easiest thing to do is have `source("mixture_model_functions.R")` at the top of your script, making sure that file is in your working directory. The individual functions are also provided as seperate files but be aware that they depend on one another; you'll need to have most of them available in your working directory.
 
-**If you use this code please refer to the paper above and Pauls Bays' website [bayslab.com](bayslab.com).**
+**If you use this code please refer to the paper above and Paul Bays' website [bayslab.com](bayslab.com).**
 
 ## Overview of functions
 
