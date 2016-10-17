@@ -188,7 +188,7 @@ repmat = function(X, nn){
   if(nn > 0){
     return(matrix(data = X, nrow = mx, ncol = nx*nn))
   } else {
-  return(matrix(nrow = mx, ncol = nn))
+    return(matrix(nrow = mx, ncol = nn))
   }
 }
 
@@ -262,7 +262,7 @@ JV10_function <- function(X, Tg,
     } else {
       Wn = Pn/nn * vonmisespdf(NE, 0, K)
     }
-                
+    
     W = rowSums(cbind(Wt, Wg, Wn))
     
     dLL = LL - sum(log(W))
@@ -271,7 +271,7 @@ JV10_function <- function(X, Tg,
     if(abs(dLL) < max_dLL | iter > max_iter | is.nan(dLL)) {
       break
     }
-      
+    
     Pt = sum(Wt / W) / n
     Pn = sum(rowSums(Wn) / W) / n
     Pu = sum(Wg / W) / n
@@ -280,14 +280,14 @@ JV10_function <- function(X, Tg,
     
     S = c(sin(E), sin(NE)) ; C = c(cos(E), cos(NE))
     r = c(sum(sum(S * rw)), sum(sum(C * rw)))
-      
+    
     if(sum(sum(rw, na.rm = T)) == 0) {
       K = 0
     } else {
       R = sqrt(sum(r^2)) / sum(sum(rw))
       K = A1inv(R)
     }
-      
+    
     if(n <= 15) {
       if(K < 2) {
         K = max(K - 2 / (n * K), 0)
@@ -295,8 +295,8 @@ JV10_function <- function(X, Tg,
         K = K * (n - 1)^3 / (n^3 + n)
       }
     }
-}
- 
+  }
+  
   
   if(iter > max_iter) {
     warning('JV10_function:MaxIter','Maximum iteration limit exceeded.', call. = FALSE)
@@ -310,7 +310,7 @@ JV10_function <- function(X, Tg,
 }
 
 #==============================================================================
-  
+
 JV10_likelihood <- function(B, X, Tg, NT = replicate(NROW(X), 0)) {
   if(NCOL(X) > 2 | NCOL(Tg) > 1 | NROW(X) != NROW(Tg) | (any(NT != 0) & NROW(NT) != NROW(X) | NROW(NT) != NROW(Tg))) {
     stop("Error: Input not correctly dimensioned", call. = FALSE)
@@ -416,7 +416,32 @@ JV10_df <- function(d, id.var = "id", tar.var = "target", res.var = "response", 
   return(paras)
 }
 
+# Function for applying the JV10_error function from the precision modelling functions
+# to a data frame
+
+JV10_df_error <- function(d, id.var = "id", tar.var = "target", res.var = "response"){
+  id <- d[, id.var]
   
+  l <- split(d, id)
+  
+  paras <- data.frame(id = FALSE, precision = FALSE, bias = FALSE)
+  
+  for(i in seq_along(l)) {
+    df <- as.data.frame.list(l[i], col.names = colnames(l[i]))
+    
+    X <- as.matrix(df[, tar.var])
+    Tg <- as.matrix(df[res.var])
+    
+    B <- JV10_error(X, Tg)
+    
+    id <- as.character(df[1, id.var])
+    
+    paras[i, 1] <- id
+    paras[i,2:3] <- B
+  }
+  return(paras)
+}
+
 ##########################################################################
 #   Copyright 2010 Paul Bays. This program is free software: you can     #
 #   redistribute it and/or modify it under the terms of the GNU General  #
