@@ -16,7 +16,8 @@ Tg <- as.matrix(df[tar.var])
 ```
 
 This has now been fixed.
-The issue only affected the estimated of the non-target probability (Pn) and guessing probability (Pu).
+The issue primarily affects the estimated of the non-target probability (Pn) and guessing probability (Pu).
+That said, it **can also affect the estimation of the target probability (Pt)**, where there are non-targets.
 
 The variable names were also the wrong way round in `JV10_df_error()`.
 However, this did not effect the result as only the difference between the two columns was relevant to the function.
