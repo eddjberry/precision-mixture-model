@@ -1,10 +1,34 @@
 # Functions for modelling response errors in precision tasks
 
+## Bug Fix (2019-02-23)
+It was pointed out by (Jim Grange)[https://github.com/JimGrange] that these functions always seems to return very smaller non-target probabilities. This was due to an error in the `JV10_df()` function. The line 
+
+```
+X <- as.matrix(df[, tar.var])
+Tg <- as.matrix(df[res.var])
+```
+
+should have been 
+
+```
+X <- as.matrix(df[, res.var])
+Tg <- as.matrix(df[tar.var])
+```
+
+This has now been fixed.
+The issue only affected the estimated of the non-target probability (Pn) and guessing probability (Pu).
+
+The variable names were also the wrong way round in `JV10_df_error()`.
+However, this did not effect the result as only the difference between the two columns was relevant to the function.
+Nevertheless, the function has now been corrected.
+
+## Overview
+
 Translation of [Paul Bays'](http://www.psychol.cam.ac.uk/people/paul-bays) Matlab functions for modelling precision data into R. Bays' guide to the functions and their usage can be found [here](http://www.paulbays.com/code/JV10/). All the function names are the same as the Matlab functions. The code is also as close as possible to the Matlab code 'under the hood'. The model implemented is described in:
 
 The precision of visual working memory is set by allocation of a shared resource. Bays PM, Catalao RFG & Husain M. *Journal of Vision* 9(10): 7, 1-11 (2009).
 
-To use the functions here the easiest thing to do is have `source("mixture_model_functions.R")` at the top of your script, making sure that file is in your working directory. The individual functions are also provided as seperate files but be aware that they depend on one another; you'll need to have most of them available in your working directory.
+To use the functions here the easiest thing to do is have `source("mixture_model_functions.R")` at the top of your script, making sure that file is in your working directory. The individual functions are also provided as separate files but be aware that they depend on one another; you'll need to have most of them available in your working directory.
 
 **If you use this code please refer to the paper above and Paul Bays' website [bayslab.com](bayslab.com).**
 
@@ -17,12 +41,12 @@ Function name | Use           | Input             | Output
 cmean         | Circular mean | Vector of radians | Single value
 cstd          | Circular SD   | Vector of radians | Single value
 randomvonmises| Random samples from a Von Mises distribution | N, Mu, concentration K | Vector of samples
-vonmisespdf   | PDF for Von Mises distribution | Vector of radians, Mu, concentration K | Vector of probabilites
+vonmisespdf   | PDF for Von Mises distribution | Vector of radians, Mu, concentration K | Vector of probabilities
 k2sd         | Convert from Von Mises K to circular SD | (Vector of) K | (Vector of) SD
 sd2k | Convert circular SD to Von Mises K | (Vector of) SD | (Vector of) K 
 wrap | Degrees to radians from -*pi* to *pi* | Vector of degrees | Vector of radians
 JV10_error | Calculate bias and precision | See below | See below
-JV10_likelihood | Estimate mixture model likelihood | Starting parameters, responses, targets (Non-targets) | Dataframe with liklihood and log-liklihood
+JV10_likelihood | Estimate mixture model likelihood | Starting parameters, responses, targets (Non-targets) | Dataframe with likelihood and log-likelihood
 JV10_function | The main modelling function | Responses, targets (Non-targets), (Starting values) | List of parameters and log-likelihood
 JV10_fit | High level function that runs JV10_function for a range of starting values | See below | Dataframe or list (see below)
 JV10_df | Runs JV10_fit over a dataframe | See below | See below
