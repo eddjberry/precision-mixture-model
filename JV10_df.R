@@ -15,8 +15,8 @@ JV10_df <- function(d, id.var = "id", tar.var = "target", res.var = "response", 
   for(i in seq_along(l)) {
     df <- as.data.frame.list(l[i], col.names = colnames(l[i]))
     
-    X <- as.matrix(df[, tar.var])
-    Tg <- as.matrix(df[res.var])
+    X <- as.matrix(df[, res.var])
+    Tg <- as.matrix(df[tar.var])
     
     if(is.null(nt.vars)) {
       B <- JV10_fit(X, Tg, return.ll = FALSE)
