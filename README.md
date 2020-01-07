@@ -1,5 +1,9 @@
 # Functions for modelling response errors in precision tasks
 
+## R package (2020-01-07)
+
+This code has now been collected into [an R package](https://github.com/eddjberry/mixturer) with some tests and a fix to the sd2k() function.
+
 ## Bug Fix (2019-02-23)
 It was pointed out by (Jim Grange)[https://github.com/JimGrange] that these functions always seems to return very smaller non-target probabilities. This was due to an error in the `JV10_df()` function. The line 
 
